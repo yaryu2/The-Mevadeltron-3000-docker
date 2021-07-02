@@ -1,0 +1,76 @@
+version: "2"
+services:
+  in:
+    image: yaryuag/python3-pip3-ubuntu
+    command: "/code/pc1.sh"
+    cap_add:
+    - NET_ADMIN
+    volumes:
+      - ./pc1:/code
+    networks:
+      - net0
+      - net1
+  mid:
+    image: yaryuag/python3-pip3-ubuntu
+    command: "/code/pc2.sh"
+    cap_add:
+    - NET_ADMIN
+    volumes:
+      - ./pc2:/code
+    networks:
+      - net1
+      - net2
+      - net4
+  out:
+    image: yaryuag/python3-pip3-ubuntu
+    command: "/code/pc3.sh"
+    cap_add:
+    - NET_ADMIN
+    volumes:
+      - ./pc3:/code
+    networks:
+      - net2
+      - net3
+  db:
+    image: yaryuag/python3-pip3-ubuntu
+    command: "/code/db.sh"
+    cap_add:
+    - NET_ADMIN
+    volumes:
+      - ./db:/code
+    networks:
+      - net4
+
+networks:
+  net0:
+    driver: bridge
+    ipam:
+        driver: default
+        config:
+            - subnet: 172.16.100.0/24
+              gateway: 172.16.100.1
+  net1:
+    ipam:
+        driver: default
+        config:
+            - subnet: 172.16.101.0/24
+              gateway: 172.16.101.1
+  net2:
+    ipam:
+        driver: default
+        config:
+            - subnet: 172.16.102.0/24
+              gateway: 172.16.102.1
+  net3:
+    driver: bridge
+    ipam:
+        driver: default
+        config:
+            - subnet: 172.16.103.0/24
+              gateway: 172.16.103.1
+  net4:
+    ipam:
+        driver: default
+        config:
+            - subnet: 172.16.104.0/24
+              gateway: 172.16.104.1
