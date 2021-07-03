@@ -113,7 +113,7 @@ class Sender:
     def verify_data(self, path):
         """Check that the data is valid"""
         p = self.queue[0]
-        return self.key.verify_data([''.join(x for x in p[PACK].data if x.isalpha())], [p[PACK].sign], path)
+        return self.key.verify_data([''.join(x for x in p[PACK].data.decode() if x.isalpha())], [p[PACK].sign], path)
 
     def convert_p2o(self):
         """Convert the packet from the internal protocol to output protocol"""

@@ -40,7 +40,9 @@ def sign(private_key, data):
     :param data: the data that create the signature.
     :return: the signature in base64.
     """
-    return base64.b64encode(str((private_key.sign(data, ''))[0]).encode())
+    hash = SHA256.new(data.encode())
+    signer = PKCS115_SigScheme(private_key)
+    return signer.sign(hash)
 
 
 def create_rsa_from_keys(key):

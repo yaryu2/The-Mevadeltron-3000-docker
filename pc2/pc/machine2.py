@@ -23,10 +23,10 @@ def send_ip(key, ip, port, protocol):
     signature = key.create_signature(data + '1')
 
     pack_add = Ether(dst='98:98:98:44:44:44') / \
-               IP(dst='172.16.104.16') / \
-               UDP(dport=2223, sport=2223) / \
-               DB(len_sign=len(signature), cmd=1, send_num=2, param=signature + data)
-
+               IP(dst='172.16.104.15') / \
+               UDP() / \
+               DB(len_sign=len(signature), cmd=1, send_num=2, param=signature + data.encode())
+    conf.iface = 'eth2'
     sendp(pack_add)
 
 
@@ -100,7 +100,8 @@ def main():
     # Verify the signature
     if s.verify_data([1]):
         # Update the DB
-        #send_ip(key, s.get_src_ip(), s.get_src_port, s.get_type())
+        send_ip(key, s.get_src_ip().decode(), s.get_src_port(), s.get_type().decode())
+        logging.info('send to DB')
 
         # Checking the validation of the pack
         if s.get_data() in json.loads(config[s.get_type()]['White List']) and s.get_src_ip() not in SUS:

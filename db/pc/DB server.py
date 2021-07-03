@@ -53,8 +53,8 @@ def add(pack, key):
     :param key: DBkey object
     """
     if pack[DB].send_num == 2:
-        signature, data = pack[DB].param[:pack[DB].len_sign], pack[DB].param[pack[DB].len_sign:]
-
+        signature, data = pack[DB].param[:pack[DB].len_sign], pack[DB].param[pack[DB].len_sign:].decode()
+        
         if key.verify_data_db(data + str(pack[DB].cmd), signature):
             ip, port, protocol = json.loads(data)
 
@@ -92,7 +92,8 @@ def main():
     key = key_manager()
 
     # Sniff packet that machine2 sent
-    pack = sniff(lfilter=filter_pack, count=1)[0]
+    pack = sniff(iface='eth0', count=1)[0]
+    pack.show2()
 
     logging.debug('finish')
 
