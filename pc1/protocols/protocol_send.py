@@ -15,27 +15,22 @@ dict_p2t = {
 
 
 class Sender:
-    def __init__(self, key, id):
-        #   Object key.
+    def __init__(self, key, id, q):
+        # Object key.
         self.key = key
 
-        #   The identify of the machine.
+        # The identify of the machine.
         self.id = id
 
-        #   A queue of packets to answer them.
+        # A queue of packets to answer them.
         self.queue = []
 
-    def filter_pack(self, pack):
-        """
-        filter the packets
-        :param pack: packet that received
-        :return: boolean - true if the packet is DB packet, otherwise False
-        """
-        return UDP in pack and pack[UDP].dport == dict_port[self.id]
+        self.q = q
 
     def receive_pack(self):
         """Filter and receive the packets"""
-        self.queue.append(sniff(lfilter=self.filter_pack, count=1)[0])
+        self.queue.append(self.q.get())
+        self.queue[0].show2()
 
     def create_signature(self, data):
         """Create signature from the data and the key"""
@@ -63,8 +58,10 @@ class Sender:
 
     def convert_i2p(self, id, port, p):
         """Convert the packet from the input protocol to internal protocol"""
+        conf.iface = 'eth1'
         return \
-            IP(dst='255.255.255.255') / \
+            Ether(dst='98:98:98:22:22:22') / \
+            IP(dst='172.16.101.12') / \
             UDP(dport=dict_port[id]) / \
             PACK(
                 sport=p[PACK].sport,
@@ -72,7 +69,7 @@ class Sender:
                 src_IP=p[PACK].src_IP,
                 type=dict_p2t[port],
                 data=p[PACK].data,
-                sign=self.create_signature(p[PACK].data)
+                sign=self.create_signature(p[PACK].data.decode())
             )
 
     def fill_with_sign(self, id, p, data):
@@ -92,9 +89,8 @@ class Sender:
     def send_packet(self, id):
         """Send the packets from input protocol."""
         p = self.queue.pop()
-        p.show()
         port = p[PACK].dport
-        send(self.convert_i2p(id, port, p))
+        sendp(self.convert_i2p(id, port, p))
 
     def send_protocol_pack(self, id, data=''):
         """Send the packets from internal protocol"""

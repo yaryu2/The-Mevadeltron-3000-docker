@@ -47,12 +47,15 @@ def multi(port, type_pack, data=''):
                 request = ss.sr1(Raw(data))
 
 
-def server1(type_pack, port, data=''):
-    print('start')
-    c, addr = open_server(port)
-    print('fucking did it')
-    ss = StreamSocket(c, Raw)
-    request = ss.sr1(Raw(data))
+def server1(type_pack, port, q):
+    # print('start')
+    # c, addr = open_server(port)
+    # print('fucking did it')
+    # ss = StreamSocket(c, Raw)
+    # request = ss.sr1(Raw(data))
+
+    addr = ('127.0.0.1', 55555)
+    request = 'LIST'
 
     pack_layer = PACK(
         sport=addr[1],
@@ -62,11 +65,7 @@ def server1(type_pack, port, data=''):
         data=request
     )
 
-    pack_layer.show()
-
-    pack = IP(dst='255.255.255.255') / UDP(sport=23233, dport=9000) / pack_layer
-    pack.show2()
-    send(pack)
+    q.put(pack_layer)
 
 
 if __name__ == '__main__':
