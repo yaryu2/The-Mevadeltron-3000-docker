@@ -62,7 +62,7 @@ class Sender:
         return \
             Ether(dst='98:98:98:22:22:22') / \
             IP(dst='172.16.101.12') / \
-            UDP(dport=dict_port[id]) / \
+            UDP() / \
             PACK(
                 sport=p[PACK].sport,
                 dport=port,
@@ -90,6 +90,7 @@ class Sender:
         """Send the packets from input protocol."""
         p = self.queue.pop()
         port = p[PACK].dport
+        conf.iface = 'eth1'
         sendp(self.convert_i2p(id, port, p))
 
     def send_protocol_pack(self, id, data=''):

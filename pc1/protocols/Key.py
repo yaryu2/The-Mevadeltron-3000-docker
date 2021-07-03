@@ -72,7 +72,7 @@ class Key:
 
         if len(msg) > 2:
             msg = msg[-2:]
-        print(msg)
+        
         send_keys(json.dumps(msg), '172.16.101.12', '98:98:98:22:22:22')
 
     def create_signature(self, data):

@@ -7,6 +7,7 @@ from protocol_send import Sender
 from multiprocessing import Process, Queue
 from server_proxy import server1
 import configparser
+from time import sleep
 
 
 def key_manager():
@@ -31,6 +32,7 @@ def send_pack_forword(q):
     key = key_manager()
     s = Sender(key, 1, q)
     s.receive_pack()
+    sleep(3)
     s.send_packet(2)
 
 

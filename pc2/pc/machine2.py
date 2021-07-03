@@ -4,7 +4,7 @@ from protocolDB import DB
 from scapy.all import *
 from sql_manage import *
 from Key import DBKey
-from multiprocessing import Process
+from multiprocessing import Process, Queue
 from protocol_send import Sender
 import configparser
 
@@ -22,11 +22,12 @@ def send_ip(key, ip, port, protocol):
     data = json.dumps([ip, port, protocol])
     signature = key.create_signature(data + '1')
 
-    pack_add = IP(dst='255.255.255.255') / \
+    pack_add = Ether(dst='98:98:98:44:44:44') / \
+               IP(dst='172.16.104.16') / \
                UDP(dport=2223, sport=2223) / \
                DB(len_sign=len(signature), cmd=1, send_num=2, param=signature + data)
 
-    send(pack_add)
+    sendp(pack_add)
 
 
 def receive_sus_list(key):
@@ -58,7 +59,7 @@ def key_manager():
     
     key.send_db_key()
     key.receive_db_key()
-
+    logging.info('key managment finished')
     return key
 
 
@@ -71,23 +72,30 @@ def filter_pack(pack):
     return UDP in pack and DB in pack
 
 
+def send_pack_forword(key):
+    """
+    The function is run as a process.
+    It receive every packet from the servers and send it to the next machine.
+    :param key: json key object
+    """
+    # Responsible for all signatures
+    logging.info('send_pack_forword')
+    s = Sender(key, 2)
+    s.receive_pack()
+    return s
+
+
 def main():
     logging.info('Start the program')
 
     # Responsible for all signatures
     key = key_manager()
 
-    logging.info('key managment finished')
-
     # Opens the config file
     config = configparser.ConfigParser()
     config.read('config.ini')
 
-    # Receive the packet from machine1
-    s = Sender(key, 2)
-    s.receive_pack()
-
-    s.queue[0].show()
+    s = send_pack_forword(key)
 
     # Verify the signature
     if s.verify_data([1]):

@@ -16,13 +16,13 @@ dict_p2t = {
 
 class Sender:
     def __init__(self, key, id):
-        #   Object key.
+        # Object key.
         self.key = key
 
-        #   The identify of the machine.
+        # The identify of the machine.
         self.id = id
 
-        #   A queue of packets to answer them.
+        # A queue of packets to answer them.
         self.queue = []
 
     def filter_pack(self, pack):
@@ -31,19 +31,21 @@ class Sender:
         :param pack: packet that received
         :return: boolean - true if the packet is DB packet, otherwise False
         """
-        return UDP in pack and pack[UDP].dport == dict_port[self.id]
+        return UDP in pack and pack[IP].dport == '172.16.101.12'
 
     def receive_pack(self):
         """Filter and receive the packets"""
-        self.queue.append(sniff(lfilter=self.filter_pack, count=1)[0])
+        conf.iface = 'eth0'
+        self.queue.append(sniff(iface='eth0', count=1)[0])
+        self.queue[0].show2()
 
     def create_signature(self, data):
         """Create signature from the data and the key"""
         return self.key.create_signature(''.join(x for x in data if x.isalpha()))
 
-    def add_signature(self, data, sign):
+    def add_signature(self, data):
         """Add signature on another signature"""
-        return self.key.create_signature(str(''.join(x for x in data if x.isalpha())[:127] + sign[:127])[:127])
+        return self.key.create_signature(str(''.join(x for x in data if x.isalpha())[:127]))
 
     def get_data(self):
         """Return the data from the packet from the head of the queue"""
@@ -86,7 +88,7 @@ class Sender:
                 src_IP=p[PACK].src_IP,
                 type=p[PACK].type,
                 data=p[PACK].data,
-                sign=json.dumps([self.add_signature(data, p[PACK].sign), p[PACK].sign])
+                sign=json.dumps([self.add_signature(data), p[PACK].sign, p[PACK].sign])
             )
 
     def send_packet(self, id):
