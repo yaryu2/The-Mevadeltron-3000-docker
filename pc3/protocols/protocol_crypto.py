@@ -28,10 +28,8 @@ def verify(public_key, data, signature):
     verifier = PKCS115_SigScheme(public_key)
     try:
         verifier.verify(hash, signature)
-        print('yey')
         return True
     except:
-        print('nay')
         return False
 
 
@@ -62,7 +60,6 @@ def send_keys(public, ip, mac):
     """
     conf.iface = 'eth1'
     p = Ether(dst=mac) / IP(dst=ip) / UDP() / Raw(public)
-    p.show()
     sendp(p)
 
 def filter_pack_key(pack):

@@ -94,7 +94,6 @@ class Key:
         :param path: list that contain the path that the packet did (to know which public key should I use)
         :return: boolean.
         """
-        print(data, signature, path)
         for machine_id, current_data, current_signature in zip(path, data, signature):
             if not verify(self.keys[machine_id], current_data, current_signature):
                 return False

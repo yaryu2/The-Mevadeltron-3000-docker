@@ -93,8 +93,9 @@ class Sender:
                 src_IP=p[PACK].src_IP,
                 type=p[PACK].type,
                 data=p[PACK].data,
-                sign=json.dumps([base64.b64encode(self.add_signature(data)).decode('ascii'), 
-                    base64.b64encode(p[PACK].sign).decode('ascii')])
+                data2=str(''.join(x for x in base64.b64encode(data).decode('ascii') if x.isalpha())[:127]),
+                sign=p[PACK].sign,
+                sign2=self.add_signature(data)
             )
 
     def send_packet(self, id):
@@ -103,7 +104,7 @@ class Sender:
         port = p[PACK].dport
         send(self.convert_i2p(id, port, p))
 
-    def send_protocol_pack(self, id, data=''):
+    def send_protocol_pack(self, id, data):
         """Send the packets from internal protocol"""
         p = self.queue.pop()
         conf.iface = 'eth1'
