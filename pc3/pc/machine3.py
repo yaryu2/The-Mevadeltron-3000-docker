@@ -33,7 +33,7 @@ def main():
     # Receive the packet from machine2
     s = Sender(key, 3)
     s.receive_pack()
-    s.queue[0].show()
+    
     # Verify the signatures
     if s.verify_signs([2, 1]):
         logging.info('received and verify')

@@ -1,7 +1,9 @@
 from Crypto.PublicKey import RSA
-from Crypto import Random
-import base64
+from Crypto.Signature.pkcs1_15 import PKCS115_SigScheme
+from Crypto.Hash import SHA256
+import binascii
 from scapy.all import *
+import base64
 
 
 def rsa_keys():
@@ -9,10 +11,9 @@ def rsa_keys():
     Create rsa keys.
     :return: public and private keys.
     """
-    length = 1024
-    private_key = RSA.generate(length, Random.new().read)
-    public_key = private_key.publickey()
-    return private_key, public_key
+    keyPair = RSA.generate(bits=1024)
+    pubKey = keyPair.publickey()
+    return keyPair, pubKey.public_key()
 
 
 def verify(public_key, data, signature):
@@ -23,7 +24,15 @@ def verify(public_key, data, signature):
     :param signature: the signature that created by the data and the private key of the sender.
     :return: boolian - True if the signature compatible with the data, otherwise False.
     """
-    return public_key.verify(data, (int(base64.b64decode(signature)),))
+    hash = SHA256.new(data)
+    verifier = PKCS115_SigScheme(public_key)
+    try:
+        verifier.verify(hash, signature)
+        print('yey')
+        return True
+    except:
+        print('nay')
+        return False
 
 
 def sign(private_key, data):

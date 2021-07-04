@@ -2,6 +2,7 @@ from scapy.all import *
 from Key import Key
 from protocol_pack import PACK
 import json
+import base64
 
 dict_port = {
     1: 9000,
@@ -35,7 +36,8 @@ class Sender:
 
     def receive_pack(self):
         """Filter and receive the packets"""
-        self.queue.append(sniff(lfilter=self.filter_pack, count=1)[0])
+        conf.iface = 'eth0'
+        self.queue.append(sniff(iface='eth0', lfilter=self.filter_pack, count=1)[0])
 
     def create_signature(self, data):
         """Create signature from the data and the key"""
@@ -92,7 +94,6 @@ class Sender:
     def send_packet(self, id):
         """Send the packets from input protocol."""
         p = self.queue.pop()
-        p.show()
         port = p[PACK].dport
         send(self.convert_i2p(id, port, p))
 
@@ -104,8 +105,10 @@ class Sender:
     def verify_signs(self, path):
         """Check that the signatures is valid"""
         p = self.queue[0]
-        signature = [str(sign) for sign in json.loads(p[PACK].sign)]
-        sign = [signature[1][:127], [''.join(x for x in p[PACK].data if x.isalpha())]]
+
+        signatures = [base64.b64decode(sign) for sign in json.loads(p[PACK].sign)]
+
+        sign = [base64.b64encode(signatures[1][:127]).decode('ascii'), [''.join(x for x in p[PACK].data.decode() if x.isalpha())]]
         return self.key.verify_data(sign, [p[PACK].sign], path)
 
     def verify_data(self, path):

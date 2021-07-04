@@ -2,6 +2,7 @@ from scapy.all import *
 from Key import Key
 from protocol_pack import PACK
 import json
+import base64
 
 dict_port = {
     1: 9000,
@@ -37,7 +38,6 @@ class Sender:
         """Filter and receive the packets"""
         conf.iface = 'eth0'
         self.queue.append(sniff(iface='eth0', count=1)[0])
-        self.queue[0].show2()
 
     def create_signature(self, data):
         """Create signature from the data and the key"""
@@ -45,23 +45,27 @@ class Sender:
 
     def add_signature(self, data):
         """Add signature on another signature"""
-        return self.key.create_signature(str(''.join(x for x in data if x.isalpha())[:127]))
+        return self.key.create_signature(str(''.join(x for x in base64.b64encode(data).decode('ascii') if x.isalpha())[:127]))
 
     def get_data(self):
         """Return the data from the packet from the head of the queue"""
-        return ''.join(x for x in self.queue[0][PACK].data if x.isalpha())
+        return ''.join(x for x in self.queue[0][PACK].data.decode() if x.isalpha())
 
     def get_type(self):
         """Return the type of the the packet from the head of the queue"""
-        return self.queue[0][PACK].type
+        return self.queue[0][PACK].type.decode()
 
     def get_src_ip(self):
         """Return the type of the the packet from the head of the queue"""
-        return self.queue[0][PACK].src_IP
+        return self.queue[0][PACK].src_IP.decode()
 
     def get_src_port(self):
         """Return the type of the the packet from the head of the queue"""
         return self.queue[0][PACK].sport
+
+    def get_sign(self):
+        """Return the type of the the packet from the head of the queue"""
+        return self.queue[0][PACK].sign
 
     def convert_i2p(self, id, port, p):
         """Convert the packet from the input protocol to internal protocol"""
@@ -80,28 +84,31 @@ class Sender:
     def fill_with_sign(self, id, p, data):
         """Add another signature to the packet."""
         return \
-            IP(dst='255.255.255.255') / \
-            UDP(dport=dict_port[id]) / \
+            Ether(dst='98:98:98:33:33:33') / \
+            IP(dst='172.16.102.13') / \
+            UDP() / \
             PACK(
                 sport=p[PACK].sport,
                 dport=p[PACK].dport,
                 src_IP=p[PACK].src_IP,
                 type=p[PACK].type,
                 data=p[PACK].data,
-                sign=json.dumps([self.add_signature(data), p[PACK].sign, p[PACK].sign])
+                sign=json.dumps([base64.b64encode(self.add_signature(data)).decode('ascii'), 
+                    base64.b64encode(p[PACK].sign).decode('ascii')])
             )
 
     def send_packet(self, id):
         """Send the packets from input protocol."""
         p = self.queue.pop()
-        p.show()
         port = p[PACK].dport
         send(self.convert_i2p(id, port, p))
 
     def send_protocol_pack(self, id, data=''):
         """Send the packets from internal protocol"""
         p = self.queue.pop()
-        send(self.fill_with_sign(id, p, data))
+        conf.iface = 'eth1'
+        p = self.fill_with_sign(id, p, data)
+        sendp(p)
 
     def verify_signs(self, path):
         """Check that the signatures is valid"""

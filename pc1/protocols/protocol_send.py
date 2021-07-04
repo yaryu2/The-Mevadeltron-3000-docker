@@ -30,7 +30,6 @@ class Sender:
     def receive_pack(self):
         """Filter and receive the packets"""
         self.queue.append(self.q.get())
-        self.queue[0].show2()
 
     def create_signature(self, data):
         """Create signature from the data and the key"""

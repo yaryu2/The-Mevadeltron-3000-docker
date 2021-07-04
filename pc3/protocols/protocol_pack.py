@@ -87,7 +87,11 @@ class PACK(Packet):
 
         #   the signature that created, and its length.
         VarLenQField("len3", None, "sign"),
-        StrLenField("sign", "", length_from=lambda pkt: pkt.len3)
+        StrLenField("sign", "", length_from=lambda pkt: pkt.len3),
+
+        #   the raw from the request packet, and its length.
+        VarLenQField("len4", None, "data2"),
+        StrLenField("data2", "", length_from=lambda pkt: pkt.len4)
         ]
 
 

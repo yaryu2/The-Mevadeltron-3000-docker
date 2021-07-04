@@ -42,10 +42,12 @@ def main():
     # Opens the config file
     config = configparser.ConfigParser()
     config.read('config.ini')
+
     q = Queue()
     p = [Process(target=server1, args=(type_pack, int(port), q))
          for type_pack in config if type_pack != 'DEFAULT'
          for port in json.loads(config[type_pack]['Port'])]
+         
     p.append(Process(target=send_pack_forword, args=(q,)))
 
     # Starts all the process that should work

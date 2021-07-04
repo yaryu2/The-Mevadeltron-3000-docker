@@ -86,5 +86,4 @@ def receive_keys_db():
     """
     conf.iface = 'eth2'
     p = sniff(iface='eth2', lfilter=filter_pack_key_db, count=1)[0]
-    p.show()
     return p[Raw].load.decode()
