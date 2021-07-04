@@ -10,7 +10,7 @@ One way link technology is designed so that any hacker who tries to attack the p
 
 ```mermaid
 graph LR
-A(Clint) -- some pack --> B(Client proxy)
+A(Client) -- some pack --> B(Client proxy)
 B -- Signed Internal Protocol --> C(Filter pack)
 C -- Signed Internal Protocol --> D(Server proxy)
 D -- some pack --> E(Server)
