@@ -32,7 +32,6 @@ class Sender:
         :param pack: packet that received
         :return: boolean - true if the packet is DB packet, otherwise False
         """
-        pack.show2()
         return UDP in pack and pack[UDP].dport == dict_port[self.id]
 
     def receive_pack(self):

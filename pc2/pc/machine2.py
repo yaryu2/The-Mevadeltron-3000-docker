@@ -31,6 +31,9 @@ def send_ip(key, ip, port, protocol):
     sendp(pack_add)
 
 
+def filter_db(pack):
+    return UDP in pack and pack[IP].src='172.16.104.15'
+
 def receive_sus_list(key):
     """
     The function is run as a process.
@@ -39,10 +42,11 @@ def receive_sus_list(key):
     """
     global SUS
     while True:
-        pack = sniff(lfilter=filter_pack, count=1)[0]
-
+        conf.iface = 'eth2'
+        pack = sniff(iface='eth2', lfilter=filter_db, count=1)[0]
+        pack.show2()
         if pack[DB].send_num == 5:
-            signature, data = pack[DB].param[:pack[DB].len_sign], pack[DB].param[pack[DB].len_sign:]
+            signature, data = pack[DB].param[:pack[DB].len_sign], pack[DB].param[pack[DB].len_sign:].decode()
 
             if key.verify_data_db(data + str(pack[DB].cmd), signature):
                 SUS = [str(ip) for ip in json.loads(data)]

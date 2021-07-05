@@ -24,7 +24,7 @@ MAC ={
 }
 
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 
 
 def create_keys():

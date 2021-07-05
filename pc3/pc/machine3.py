@@ -40,8 +40,8 @@ def main():
 
         # Convert internal protocol to original protocol
         ip, cmd = s.convert_p2o()
-        ftp = FTP(dict_ip_server[ip])
-        ftp.sendcmd(cmd)
+        # ftp = FTP(dict_ip_server[ip])
+        # ftp.sendcmd(cmd)
 
 
 if __name__ == '__main__':

@@ -18,14 +18,13 @@ def receive_sus():
     :return: boolean - True if there is new suspicious IP otherwise False.
     """
     global SUS
-    with open('sus_list.txt', 'r') as sus_file:
-        s = json.loads(sus_file.read())
+    s = open('sus_list.txt', 'r').readlines()
 
-        if s != SUS:
-            SUS = s
-            return False
+    if s != SUS:
+        SUS = s
+        return False
 
-        return True
+    return True
 
 
 def send_sus_list(key):
@@ -38,12 +37,14 @@ def send_sus_list(key):
         if not receive_sus():
             signature = key.create_signature(json.dumps(SUS) + '2')
 
-            pack_send = IP(dst='255.255.255.255') / \
+            pack_send = Ether(dst='98:98:98:22:22:22') / \
+                        IP(dst='172.16.104.16') / \
                         UDP(dport=2223, sport=2223) / \
                         DB(len_sign=len(signature), cmd=2,
-                           send_num=5, param=signature + json.dumps(SUS))
+                           send_num=5, param=signature + json.dumps(SUS).encode())
 
-            send(pack_send)
+            conf.iface='eth0'
+            sendp(pack_send)
 
 
 def add(pack, key):
@@ -86,16 +87,15 @@ def key_manager():
 
 
 def main():
-    logging.debug('Start the program')
+    logging.info('Start the program')
 
     # Responsible for all signatures
     key = key_manager()
 
     # Sniff packet that machine2 sent
     pack = sniff(iface='eth0', count=1)[0]
-    pack.show2()
 
-    logging.debug('finish')
+    logging.info('finish')
 
     # Check valid and update the DB
     add(pack, key)
@@ -105,7 +105,7 @@ def main():
     # 2. check port scan
     # 3. inform machine2 if sus ip was found
     p = [Process(target=ddos.main()),
-         Process(target=portscan.main()),
+         #Process(target=portscan.main()),
          Process(target=send_sus_list, args=(key,))]
 
     for process in p:

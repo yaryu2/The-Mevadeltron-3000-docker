@@ -11,5 +11,5 @@ pip3 install -r requirements.txt
 cd pc
 
 ifconfig eth0 172.16.104.15/24 netmask 255.255.255.0 up
-
+clear
 /bin/bash

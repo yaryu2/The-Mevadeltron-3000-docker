@@ -5,7 +5,7 @@ import json
 import configparser
 
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 BLACK_LIST = []
 
 

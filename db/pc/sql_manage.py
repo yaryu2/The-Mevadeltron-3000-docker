@@ -8,7 +8,7 @@ def create_table():
     """Create a new table in the DB"""
     sql = sqlite3.connect('data.db')
     cursor = sql.cursor()
-    print("Successfully Connected to SQLite")
+    logging.debug("Successfully Connected to SQLite")
 
     cursor.execute(
         '''CREATE TABLE Status
@@ -42,8 +42,6 @@ def add_values(ip, port, count_requests, t_start, protocol):
     cursor.execute(sqlite_insert_query, data)
     sql.commit()
 
-    logging.debug("Record inserted successfully into SqliteDb_developers table ", cursor.rowcount)
-
     cursor.close()
 
 
@@ -55,8 +53,6 @@ def update_sql(ip, port):
     """
     sql = sqlite3.connect('data.db')
     cursor = sql.cursor()
-
-    logging.debug("Connected to SQLite")
 
     count_request_cmd = """SELECT count_requests FROM Status WHERE ip = ? AND port = ?"""
     cursor.execute(count_request_cmd, [ip, port])
@@ -81,8 +77,6 @@ def delete_ip(ip):
     sql = sqlite3.connect('data.db')
     cursor = sql.cursor()
 
-    logging.debug("Connected to SQLite")
-
     # Deleting single record now
     sql_delete_query = """DELETE from Status where ip = ?"""
 
@@ -102,8 +96,6 @@ def get_count_request():
     """
     sql = sqlite3.connect('data.db')
     cursor = sql.cursor()
-
-    logging.debug("Connected to SQLite")
 
     get_ip = """SELECT ip FROM Status"""
 
@@ -131,8 +123,6 @@ def get_time_start():
     sql = sqlite3.connect('data.db')
     cursor = sql.cursor()
 
-    logging.debug("Connected to SQLite")
-
     get_ip = """SELECT ip FROM Status"""
 
     ip = cursor.execute(get_ip).fetchall()
@@ -158,8 +148,6 @@ def get_all_ip():
     sql = sqlite3.connect('data.db')
 
     cursor = sql.cursor()
-
-    logging.debug("Connected to SQLite")
 
     get_ip = """SELECT ip FROM Status"""
 
