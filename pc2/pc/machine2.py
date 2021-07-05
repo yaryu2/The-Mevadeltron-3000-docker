@@ -7,6 +7,8 @@ from Key import DBKey
 from multiprocessing import Process, Queue
 from protocol_send import Sender
 import configparser
+import importlib
+
 
 SUS = []
 
@@ -88,7 +90,8 @@ def pack_manager(key, config):
 
             # Checking the validation of the pack
             if s.get_data() in json.loads(config[s.get_type()]['White List']) and s.get_src_ip() not in SUS:
-                s.send_protocol_pack(3, s.get_sign())
+                if module = importlib.import_module('protocols_scripts.' + s.get_type()):
+                    s.send_protocol_pack(3, s.get_sign())
 
 
 def main():

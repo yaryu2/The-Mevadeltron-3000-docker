@@ -11,7 +11,8 @@ dict_port = {
 }
 dict_p2t = {
     20: 'FTP',
-    21: 'FTP'
+    21: 'FTP',
+    22: 'Telnet'
 }
 
 
