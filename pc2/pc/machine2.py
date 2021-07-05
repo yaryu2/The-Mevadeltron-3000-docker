@@ -32,7 +32,8 @@ def send_ip(key, ip, port, protocol):
 
 
 def filter_db(pack):
-    return UDP in pack and pack[IP].src='172.16.104.15'
+    return UDP in pack and pack[IP].src=='172.16.104.15'
+
 
 def receive_sus_list(key):
     """
@@ -44,7 +45,7 @@ def receive_sus_list(key):
     while True:
         conf.iface = 'eth2'
         pack = sniff(iface='eth2', lfilter=filter_db, count=1)[0]
-        pack.show2()
+        
         if pack[DB].send_num == 5:
             signature, data = pack[DB].param[:pack[DB].len_sign], pack[DB].param[pack[DB].len_sign:].decode()
 
