@@ -85,5 +85,5 @@ def receive_keys_db():
     :return: the key from other machines.
     """
     conf.iface = 'eth2'
-    p = sniff(iface='eth2', count=1)[0]
+    p = sniff(iface='eth2', lfilter=filter_pack_key_db, count=1)[0]
     return p[Raw].load.decode()

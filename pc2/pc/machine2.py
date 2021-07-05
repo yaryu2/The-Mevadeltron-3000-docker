@@ -69,26 +69,26 @@ def key_manager():
     return key
 
 
-def filter_pack(pack):
-    """
-    filter the packets
-    :param pack: packet that received
-    :return: boolean - true if the packet is DB packet, otherwise False
-    """
-    return UDP in pack and DB in pack
-
-
-def send_pack_forword(key):
+def pack_manager(key, config):
     """
     The function is run as a process.
     It receive every packet from the servers and send it to the next machine.
     :param key: json key object
     """
     # Responsible for all signatures
-    logging.info('send_pack_forword')
+    logging.info('pack_manager')
     s = Sender(key, 2)
-    s.receive_pack()
-    return s
+    while True:
+        s.receive_pack()
+
+        if s.verify_data([1]):
+            # Update the DB
+            send_ip(key, s.get_src_ip(), s.get_src_port(), s.get_type())
+            logging.info('send to DB')
+
+            # Checking the validation of the pack
+            if s.get_data() in json.loads(config[s.get_type()]['White List']) and s.get_src_ip() not in SUS:
+                s.send_protocol_pack(3, s.get_sign())
 
 
 def main():
@@ -100,21 +100,9 @@ def main():
     # Opens the config file
     config = configparser.ConfigParser()
     config.read('config.ini')
-
-    s = send_pack_forword(key)
-    s.queue[0].show2()
-    # Verify the signature
-    if s.verify_data([1]):
-        # Update the DB
-        send_ip(key, s.get_src_ip(), s.get_src_port(), s.get_type())
-        logging.info('send to DB')
-
-        # Checking the validation of the pack
-        if s.get_data() in json.loads(config[s.get_type()]['White List']) and s.get_src_ip() not in SUS:
-            s.send_protocol_pack(3, s.get_sign())
-
+    
     # Open process that receive from the DB all the sus ip
-    p = [Process(target=receive_sus_list, args=(key,))]
+    p = [Process(target=receive_sus_list, args=(key,)), Process(target=pack_manager, args=(key, config))]
     for process in p:
         process.start()
 

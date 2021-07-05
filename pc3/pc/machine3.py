@@ -32,16 +32,18 @@ def main():
 
     # Receive the packet from machine2
     s = Sender(key, 3)
-    s.receive_pack()
     
-    # Verify the signatures
-    if s.verify_signs([2, 1]):
-        logging.info('received and verify')
+    while True:
+        s.receive_pack()
+    
+        # Verify the signatures
+        if s.verify_signs([2, 1]):
+            logging.info('received and verify')
 
-        # Convert internal protocol to original protocol
-        ip, cmd = s.convert_p2o()
-        # ftp = FTP(dict_ip_server[ip])
-        # ftp.sendcmd(cmd)
+            # Convert internal protocol to original protocol
+            ip, cmd = s.convert_p2o()
+            # ftp = FTP(dict_ip_server[ip])
+            # ftp.sendcmd(cmd)
 
 
 if __name__ == '__main__':

@@ -72,7 +72,7 @@ def filter_pack(pack):
     :param pack: packet that received
     :return: boolean - true if the packet is DB packet, otherwise False
     """
-    return UDP in pack and DB in pack
+    return UDP in pack and pack[IP].dst == '172.16.104.15'
 
 
 def key_manager():
@@ -85,6 +85,10 @@ def key_manager():
     key.send_db_key()
     return key
 
+def handle_machine2(key):
+    while True:  
+        pack = sniff(iface='eth0', lfilter=filter_pack, count=1)[0]
+        add(pack, key)
 
 def main():
     logging.info('Start the program')
@@ -92,21 +96,13 @@ def main():
     # Responsible for all signatures
     key = key_manager()
 
-    # Sniff packet that machine2 sent
-    pack = sniff(iface='eth0', count=1)[0]
-
-    logging.info('finish')
-
     # Check valid and update the DB
-    add(pack, key)
+    
 
-    # Open Processes:
-    # 1. check ddos
-    # 2. check port scan
-    # 3. inform machine2 if sus ip was found
-    p = [Process(target=ddos.main()),
-         #Process(target=portscan.main()),
-         Process(target=send_sus_list, args=(key,))]
+    p = [Process(target=ddos.main),
+         # Process(target=portscan.main()),
+         Process(target=send_sus_list, args=(key,)), 
+         Process(target=handle_machine2, args=(key,))]
 
     for process in p:
         process.start()
