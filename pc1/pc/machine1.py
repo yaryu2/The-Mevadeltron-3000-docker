@@ -8,6 +8,7 @@ from multiprocessing import Process, Queue
 from server_proxy import server1
 import configparser
 from time import sleep
+from threading import Thread
 
 
 def key_manager():
@@ -31,9 +32,10 @@ def send_pack_forword(q):
     # Responsible for all signatures
     key = key_manager()
     s = Sender(key, 1, q)
-    s.receive_pack()
-    sleep(3)
-    s.send_packet(2)
+    
+    threads = [Thread(s.receive_pack()), Thread(s.send_packet(2))]
+    for thread in threads:
+        thread.start()
 
 
 def main():

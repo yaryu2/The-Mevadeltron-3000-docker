@@ -2,6 +2,7 @@ from scapy.all import *
 from Key import Key
 from protocol_pack import PACK
 import json
+from time import sleep
 
 dict_port = {
     1: 9000,
@@ -90,6 +91,7 @@ class Sender:
         p = self.queue.pop()
         port = p[PACK].dport
         conf.iface = 'eth1'
+        sleep(3)
         sendp(self.convert_i2p(id, port, p))
 
     def send_protocol_pack(self, id, data=''):

@@ -51,7 +51,7 @@ def receive_sus_list(key):
 
             if key.verify_data_db(data + str(pack[DB].cmd), signature):
                 SUS = [str(ip) for ip in json.loads(data)]
-                print(SUS)
+                logging.info(SUS)
 
 
 def key_manager():
@@ -102,7 +102,7 @@ def main():
     config.read('config.ini')
 
     s = send_pack_forword(key)
-
+    s.queue[0].show2()
     # Verify the signature
     if s.verify_data([1]):
         # Update the DB

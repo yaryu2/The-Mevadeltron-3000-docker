@@ -32,12 +32,12 @@ class Sender:
         :param pack: packet that received
         :return: boolean - true if the packet is DB packet, otherwise False
         """
-        return UDP in pack and pack[IP].dport == '172.16.101.12'
+        return UDP in pack and pack[IP].dst == '172.16.101.12'
 
     def receive_pack(self):
         """Filter and receive the packets"""
         conf.iface = 'eth0'
-        self.queue.append(sniff(iface='eth0', count=1)[0])
+        self.queue.append(sniff(iface='eth0', lfilter=self.filter_pack, count=1)[0])
 
     def create_signature(self, data):
         """Create signature from the data and the key"""

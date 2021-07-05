@@ -86,10 +86,6 @@ def key_manager():
     return key
 
 
-def filter_db_pack(pack):
-    return UDP in pack and pack[IP].src == '172.16.104.16'
-
-
 def main():
     logging.info('Start the program')
 
@@ -97,7 +93,7 @@ def main():
     key = key_manager()
 
     # Sniff packet that machine2 sent
-    pack = sniff(iface='eth0', lfilter=filter_db_pack, count=1)[0]
+    pack = sniff(iface='eth0', count=1)[0]
 
     logging.info('finish')
 
