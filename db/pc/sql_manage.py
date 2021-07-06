@@ -1,7 +1,7 @@
 import sqlite3
 import logging
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(format='%(message)s', level=logging.WARNING, filename='sus_list.log')
 
 
 def create_table():
@@ -164,3 +164,27 @@ def get_all_ip():
     cursor.close()
 
     return zip(ip, protocol, port)
+
+
+def get_ips():
+    """
+    Get the IPs from the DB.
+    :return: list that contain ip, protocol, port
+    """
+    sql = sqlite3.connect('data.db')
+
+    cursor = sql.cursor()
+
+    get_ip = """SELECT ip FROM Status"""
+
+    ip = cursor.execute(get_ip).fetchall()
+
+    cursor.close()
+
+    return ip
+
+
+from collections import Counter
+ips = Counter([ip[0] for ip in get_ips()])
+
+print(ips)

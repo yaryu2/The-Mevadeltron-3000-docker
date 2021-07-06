@@ -14,6 +14,7 @@ def check_count():
     This function run as a Process.
     Scans the DB and looks for anomalies in the amount of messages a particular computer sends (by config file).
     """
+
     config = configparser.ConfigParser()
     config.read('config.ini')
 
@@ -21,7 +22,6 @@ def check_count():
         try:
             for user in get_count_request():
                 ip, count, protocol = str(user[0][0]), user[1][0], str(user[2][0])
-
                 if count >= int(config[protocol]['Count Request']):
                     logging.warning(ip)
 
@@ -44,7 +44,7 @@ def delete_by_time():
                     delete_ip(ip)
 
         except Exception as e:
-            logging.debug(e)
+            logging.info(e)
 
 
 def main():

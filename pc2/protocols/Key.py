@@ -24,9 +24,6 @@ MAC ={
 }
 
 
-logging.basicConfig(level=logging.DEBUG)
-
-
 def create_keys():
     """
     Create private and public keys.

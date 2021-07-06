@@ -1,23 +1,9 @@
 from sql_manage import *
-import threading
-import logging
 import json
 import configparser
+import logging
 
-
-logging.basicConfig(level=logging.INFO)
-BLACK_LIST = []
-
-
-def inform_about_sus():
-    """When there is new suspicious IP it updates the sus_list.txt on the new IP"""
-    with open('sus_list.txt', 'r') as sus_file:
-        sus = json.loads(sus_file.read())
-
-    [BLACK_LIST.append(i) for i in sus if i not in BLACK_LIST]
-
-    with open('sus_list.txt', 'w') as sus_file:
-        sus_file.write(json.dumps(BLACK_LIST))
+logging.basicConfig(format='%(message)s', level=logging.WARNING, filename='sus_list.log')
 
 
 def check_port():
@@ -32,19 +18,17 @@ def check_port():
         try:
             for user in get_all_ip():
                 ip, protocol, port = str(user[0][0]), str(user[1][0]), user[2][0]
-                if port not in json.loads(config[protocol]['Port']) and ip not in BLACK_LIST:
-                    BLACK_LIST.append(ip)
-                    inform_about_sus()
 
-                    logging.info(str(BLACK_LIST))
+                if str(port) not in json.loads(config[protocol]['Port']):
+                    logging.warning(ip)
 
         except Exception as e:
-            logging.debug(e)
+            logging.info(e)
 
 
 def main():
-    threading.Thread(target=check_port).start()
+    check_port()
 
 
 if __name__ == '__main__':
-    inform_about_sus()
+    main()

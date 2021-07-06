@@ -59,9 +59,9 @@ class Sender:
         """Return the type of the the packet from the head of the queue"""
         return self.queue[0][PACK].src_IP.decode()
 
-    def get_src_port(self):
+    def get_dst_port(self):
         """Return the type of the the packet from the head of the queue"""
-        return self.queue[0][PACK].sport
+        return self.queue[0][PACK].dport
 
     def get_sign(self):
         """Return the type of the the packet from the head of the queue"""

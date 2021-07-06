@@ -1,8 +1,8 @@
+import logging
 import sys; sys.path.append('../protocols')
 import json
 from protocolDB import DB
 from scapy.all import *
-from sql_manage import *
 from Key import DBKey
 from multiprocessing import Process, Queue
 from protocol_send import Sender
@@ -10,7 +10,7 @@ import configparser
 import importlib
 
 
-SUS = []
+logging.basicConfig(format='%(message)s', level=logging.WARNING, filename='sus_list.log')
 
 
 def send_ip(key, ip, port, protocol):
@@ -34,7 +34,7 @@ def send_ip(key, ip, port, protocol):
 
 
 def filter_db(pack):
-    return UDP in pack and pack[IP].src=='172.16.104.15'
+    return UDP in pack and pack[IP].src == '172.16.104.15'
 
 
 def receive_sus_list(key):
@@ -52,8 +52,7 @@ def receive_sus_list(key):
             signature, data = pack[DB].param[:pack[DB].len_sign], pack[DB].param[pack[DB].len_sign:].decode()
 
             if key.verify_data_db(data + str(pack[DB].cmd), signature):
-                SUS = [str(ip) for ip in json.loads(data)]
-                logging.info(SUS)
+                [logging.warning(str(ip)) for ip in json.loads(data)]
 
 
 def key_manager():
@@ -71,6 +70,14 @@ def key_manager():
     return key
 
 
+def get_sus_list():
+    """
+    Searching for new suspicious IP
+    :return: boolean - True if there is new suspicious IP otherwise False.
+    """
+    return open('sus_list.log', 'r').readlines()
+
+
 def pack_manager(key, config):
     """
     The function is run as a process.
@@ -85,12 +92,15 @@ def pack_manager(key, config):
 
         if s.verify_data([1]):
             # Update the DB
-            send_ip(key, s.get_src_ip(), s.get_src_port(), s.get_type())
-            logging.info('send to DB')
+            send_ip(key, s.get_src_ip(), s.get_dst_port(), s.get_type())
+            logging.debug('send to DB')
 
+            sus = get_sus_list()
             # Checking the validation of the pack
-            if s.get_data() in json.loads(config[s.get_type()]['White List']) and s.get_src_ip() not in SUS:
-                if module = importlib.import_module('protocols_scripts.' + s.get_type()):
+            if s.get_data() in json.loads(config[s.get_type()]['White List']) and s.get_src_ip() not in sus:
+
+                module = importlib.import_module('scripts_protocol.' + s.get_type())
+                if module.main(s.get_data()):
                     s.send_protocol_pack(3, s.get_sign())
 
 
