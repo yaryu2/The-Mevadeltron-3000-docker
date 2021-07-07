@@ -78,6 +78,16 @@ def get_sus_list():
     return open('sus_list.log', 'r').readlines()
 
 
+def loading_script(s):
+    module = importlib.import_module('scripts_protocol.' + s.get_type())
+    valid, data = module.main(s.get_data())
+    if valid:
+        if data != '':
+            s.send_protocol_pack(data)
+        else:
+            s.send_protocol_pack(s.get_sign())
+
+
 def pack_manager(key, config):
     """
     The function is run as a process.
@@ -99,9 +109,11 @@ def pack_manager(key, config):
             # Checking the validation of the pack
             if s.get_data() in json.loads(config[s.get_type()]['White List']) and s.get_src_ip() not in sus:
 
-                module = importlib.import_module('scripts_protocol.' + s.get_type())
-                if module.main(s.get_data()):
-                    s.send_protocol_pack(3, s.get_sign())
+                if config[s.get_type()]['load_script'] == 'Yes':
+                    loading_script(s)
+                    continue
+
+                s.send_protocol_pack(s.get_sign())
 
 
 def main():

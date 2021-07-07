@@ -182,9 +182,3 @@ def get_ips():
     cursor.close()
 
     return ip
-
-
-from collections import Counter
-ips = Counter([ip[0] for ip in get_ips()])
-
-print(ips)

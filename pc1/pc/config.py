@@ -23,6 +23,8 @@ def main():
 
     white_list = multiple_inputs('Enter white list of commands that can be obtained:\r\n')
 
+    load_script = input('Enter [Yes / No] if you want to load a script:\r\n')
+
     first_response = multiple_inputs('Enter the message to send at the start of the connection (option):\r\n')
 
     config[name] = {}
@@ -30,16 +32,26 @@ def main():
     config[name]['Count Request'] = count_request
     config[name]['White List'] = json.dumps(white_list)
     config[name]['First Response'] = '\n'.join(first_response)
+    config[name]['load_script'] = load_script
 
     print('Protocol name = ' + name)
     print('Port = ' + config[name]['Port'])
     print('Count Request = ' + config[name]['Count Request'])
     print('White List = ' + config[name]['White List'])
     print('First Response = ' + config[name]['First Response'])
+    print('load_script = ' + config[name]['load_script'])
 
     if input('Enter (y/n) if you agree to add these protocol: \n\r') == 'y' or 'Y':
         with open('config.ini', 'a') as configfile:
             config.write(configfile)
+
+    if load_script == 'Yes':
+        print('Add your script to "scripts_protocol" folder.\r\n '
+              'Its name is the protocol name\r\n'
+              'the script must conclude main function just like this:\r\n'
+              'def main(data):\r\n\r\n'
+              'The return value need to be [True/False, str value]')
+
 
 
 if __name__ == '__main__':

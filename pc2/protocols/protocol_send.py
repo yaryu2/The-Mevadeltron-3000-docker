@@ -81,7 +81,7 @@ class Sender:
                 sign=self.create_signature(p[PACK].data)
             )
 
-    def fill_with_sign(self, id, p, data):
+    def fill_with_sign(self, p, data):
         """Add another signature to the packet."""
         return \
             Ether(dst='98:98:98:33:33:33') / \
@@ -104,11 +104,11 @@ class Sender:
         port = p[PACK].dport
         send(self.convert_i2p(id, port, p))
 
-    def send_protocol_pack(self, id, data):
+    def send_protocol_pack(self, data):
         """Send the packets from internal protocol"""
         p = self.queue.pop()
         conf.iface = 'eth1'
-        p = self.fill_with_sign(id, p, data)
+        p = self.fill_with_sign(p, data)
         sendp(p)
 
     def verify_signs(self, path):
