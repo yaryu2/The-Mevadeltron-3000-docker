@@ -6,7 +6,8 @@ import json
 import configparser
 
 
-logging.basicConfig(format='%(message)s', level=logging.INFO)
+logging.basicConfig(format='%(message)s', level=logging.WARNING, filename='sus_list.log')
+BLACK_LIST = []
 
 
 def check_count():
@@ -22,7 +23,8 @@ def check_count():
         try:
             for user in get_count_request():
                 ip, count, protocol = str(user[0][0]), user[1][0], str(user[2][0])
-                if count >= int(config[protocol]['Count Request']):
+                if count >= int(config[protocol]['Count Request']) and ip not in BLACK_LIST:
+                    BLACK_LIST.append(ip)
                     logging.warning(ip)
 
         except Exception as e:
@@ -40,7 +42,7 @@ def delete_by_time():
             for user in get_time_start():
                 ip, start, protocol = str(user[0][0]), user[1][0], str(user[2][0])
                 
-                if now - start >= 60:
+                if now - start >= 60 and ip not in BLACK_LIST:
                     delete_ip(ip)
 
         except Exception as e:

@@ -41,7 +41,7 @@ def main():
         if s.verify_signs([2, 1]):
             logging.info('received and verify')
             ip, cmd = s.convert_p2o()
-            loading_script(ip, cmd, s.get_type().decode())
+            loading_script(cmd, s.get_type().decode())
             s.queue.pop()
             # Convert internal protocol to original protocol
             # ftp = FTP(dict_ip_server[ip])

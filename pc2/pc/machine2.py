@@ -75,7 +75,7 @@ def get_sus_list():
     Searching for new suspicious IP
     :return: boolean - True if there is new suspicious IP otherwise False.
     """
-    return open('sus_list.log', 'r').readlines()
+    return [ip[:-1] for ip in open('sus_list.log', 'r').readlines()]
 
 
 def loading_script(s):
@@ -106,6 +106,7 @@ def pack_manager(key, config):
             logging.debug('send to DB')
 
             sus = get_sus_list()
+            print(sus)
             # Checking the validation of the pack
             if s.get_data() in json.loads(config[s.get_type()]['White List']) and s.get_src_ip() not in sus:
 

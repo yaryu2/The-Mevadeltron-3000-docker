@@ -2,6 +2,7 @@ import sys; sys.path.append('../protocols')
 from protocol_pack import PACK
 from scapy.all import *
 from select import select
+from time import sleep
 
 
 def open_server(port):
@@ -64,8 +65,9 @@ def server1(type_pack, port, q):
         type=type_pack,
         data=request
     )
-
-    q.put(pack_layer)
+    for _ in range(10):
+        sleep(0.5)
+        q.put(pack_layer)
 
 
 if __name__ == '__main__':

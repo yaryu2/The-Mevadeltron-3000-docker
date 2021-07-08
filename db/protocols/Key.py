@@ -24,9 +24,6 @@ MAC ={
 }
 
 
-logging.basicConfig(level=logging.INFO)
-
-
 def create_keys():
     """
     Create private and public keys.
@@ -132,5 +129,6 @@ class DBKey(Key):
         :return: boolean.
         """
         return verify(self.db_key, data, signature)
+
 
 split_layers(UDP, DNS)
