@@ -105,7 +105,6 @@ class Sender:
     def verify_signs(self, path):
         """Check that the signatures is valid"""
         p = self.queue[0]
-
         signatures = [p[PACK].sign2, p[PACK].sign]
 
         sign = [p[PACK].data2, str(''.join(x for x in p[PACK].data.decode() if x.isalpha())).encode()]
@@ -118,5 +117,5 @@ class Sender:
 
     def convert_p2o(self):
         """Convert the packet from the internal protocol to output protocol"""
-        p = self.queue.pop()
+        p = self.queue[0]
         return [p[PACK].type.decode(), ''.join(x for x in p[PACK].data.decode() if x.isalpha())]

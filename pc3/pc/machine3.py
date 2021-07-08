@@ -4,11 +4,7 @@ from scapy.all import *
 from Key import Key
 from ftplib import FTP
 from protocol_send import Sender
-
-
-dict_ip_server = {
-    'FTP': 'ftp.us.debian.org'
-}
+import importlib
 
 
 def key_manager():
@@ -20,6 +16,11 @@ def key_manager():
     key.receive_all_keys()
 
     return key
+
+
+def loading_script(cmd, type):
+    module = importlib.import_module('client_proxys.' + type)
+    module.main(cmd)
 
 
 def main():
@@ -39,9 +40,10 @@ def main():
         # Verify the signatures
         if s.verify_signs([2, 1]):
             logging.info('received and verify')
-
-            # Convert internal protocol to original protocol
             ip, cmd = s.convert_p2o()
+            loading_script(ip, cmd, s.get_type().decode())
+            s.queue.pop()
+            # Convert internal protocol to original protocol
             # ftp = FTP(dict_ip_server[ip])
             # ftp.sendcmd(cmd)
 

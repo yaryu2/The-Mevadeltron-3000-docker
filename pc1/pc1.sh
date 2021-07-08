@@ -8,7 +8,6 @@ ip link set dev eth0 address 98:98:98:11:11:11
 
 cd code/pc
 
-ifconfig eth0 172.16.100.10/24 netmask 255.255.255.0 up
 ifconfig eth1 172.16.101.22/24 netmask 255.255.255.0 up
 clear
 /bin/bash
