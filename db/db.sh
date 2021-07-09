@@ -11,3 +11,4 @@ cd code/pc
 ifconfig eth0 172.16.104.15/24 netmask 255.255.255.0 up
 clear
 python3 "DB server.py"
+/bin/bash

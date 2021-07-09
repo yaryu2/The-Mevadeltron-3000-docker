@@ -5,7 +5,7 @@ from protocol_crypto import *
 from Key import Key
 from protocol_send import Sender
 from multiprocessing import Process, Queue
-from server_proxy import server1
+from server_proxy import *
 import configparser
 from time import sleep
 
@@ -45,7 +45,7 @@ def main():
     config.read('config.ini')
 
     q = Queue()
-    p = [Process(target=server1, args=(type_pack, int(port), q))
+    p = [Process(target=multi, args=(int(port), type_pack, q, config[type_pack]['first response']))
          for type_pack in config if type_pack != 'DEFAULT'
          for port in json.loads(config[type_pack]['Port'])]
          

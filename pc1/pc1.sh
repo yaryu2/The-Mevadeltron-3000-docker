@@ -10,4 +10,5 @@ cd code/pc
 
 ifconfig eth1 172.16.101.22/24 netmask 255.255.255.0 up
 clear
+python3 machine1.py
 /bin/bash

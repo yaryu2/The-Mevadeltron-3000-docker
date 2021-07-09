@@ -7,8 +7,6 @@ services:
     - NET_ADMIN
     volumes:
       - ./pc1:/code
-    ports:
-      - "1-65535:1-65535"
     networks:
       - net0
       - net1
@@ -60,11 +58,6 @@ networks:
               gateway: 172.16.102.1
   net3:
     driver: bridge
-    ipam:
-        driver: default
-        config:
-            - subnet: 172.16.103.0/24
-              gateway: 172.16.103.1
   net4:
     ipam:
         driver: default

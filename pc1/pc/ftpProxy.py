@@ -5,7 +5,7 @@ from scapy.all import *
 
 def main():
     s = socket.socket()
-    s.bind(('0.0.0.0', 21))
+    s.bind(('0.0.0.0', 20))
     s.listen(1)
     c, addr = s.accept()
     print(c)
