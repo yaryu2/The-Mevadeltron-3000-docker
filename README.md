@@ -33,19 +33,19 @@ To run this project, To run this project, you must first download a Docker:
 Once downloaded, all it takes to run the project is to download it from git, and open 4 windows of cmd's in the project folder and type:
 * the first one:
 ```bash
-docker-compose run --rm db
+pc1
 ```  
 * the second one:
 ```bash
-docker-compose run --rm out
+pc2
 ```  
 * the third one:
 ```bash
-docker-compose run --rm mid
+pc3
 ```  
 * the fourth one: 
 ```bash
-docker-compose run --rm in
+db
 ```  
 It should be done in the order I presented.
 **You did it! the project run successfully**
