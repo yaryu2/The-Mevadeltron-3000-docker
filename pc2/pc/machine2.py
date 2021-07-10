@@ -80,6 +80,7 @@ def get_sus_list():
 
 def loading_script(s):
     module = importlib.import_module('scripts_protocol.' + s.get_type())
+    print(s.get_data())
     valid, data = module.main(s.get_data())
     if valid:
         if data != '':
@@ -106,9 +107,8 @@ def pack_manager(key, config):
             logging.debug('send to DB')
 
             sus = get_sus_list()
-            print(sus)
             # Checking the validation of the pack
-            if s.get_data() in json.loads(config[s.get_type()]['White List']) and s.get_src_ip() not in sus:
+            if s.get_data().split()[0] in json.loads(config[s.get_type()]['White List']) and s.get_src_ip() not in sus:
 
                 if config[s.get_type()]['load_script'] == 'Yes':
                     loading_script(s)

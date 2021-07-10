@@ -53,6 +53,5 @@ def main():
               'The return value need to be [True/False, str value]')
 
 
-
 if __name__ == '__main__':
     main()

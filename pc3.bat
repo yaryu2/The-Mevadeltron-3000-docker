@@ -1,1 +1,1 @@
-docker-compose run --rm out
+docker-compose run -p 5000:5000 --rm out

@@ -29,8 +29,8 @@ services:
     volumes:
       - ./pc3:/code
     networks:
-      - net2
       - net3
+      - net2
   db:
     image: yaryuag/python3-pip3-ubuntu
     command: "/code/db.sh"

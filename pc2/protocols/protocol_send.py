@@ -49,7 +49,7 @@ class Sender:
 
     def get_data(self):
         """Return the data from the packet from the head of the queue"""
-        return ''.join(x for x in self.queue[0][PACK].data.decode() if x.isalpha())
+        return self.queue[0][PACK].data.decode()
 
     def get_type(self):
         """Return the type of the the packet from the head of the queue"""

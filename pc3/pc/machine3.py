@@ -43,9 +43,6 @@ def main():
             ip, cmd = s.convert_p2o()
             loading_script(cmd, s.get_type().decode())
             s.queue.pop()
-            # Convert internal protocol to original protocol
-            # ftp = FTP(dict_ip_server[ip])
-            # ftp.sendcmd(cmd)
 
 
 if __name__ == '__main__':
